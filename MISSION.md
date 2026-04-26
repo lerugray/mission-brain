@@ -73,7 +73,7 @@ These don't move:
   multi-project bot orchestrator with hands-off enforcement and
   audit logging. mission-brain is a Mode B project in GS for its
   own build-out tracking.
-- **[mission-bullet](https://github.com/lerugray/mission-bullet)**:
+- **[mission-bullet-oss](https://github.com/lerugray/mission-bullet-oss)**:
   AI-assisted bullet journal for daily capture and weekly review.
   Mission-bullet's daily entries are a natural mission-brain ingest
   source through an opt-in loader.

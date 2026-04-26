@@ -17,7 +17,7 @@ mission-brain ships with reference loaders for these layouts:
 - **Facebook export** — `corpus/facebook/<export-zip>` (drop the
   zip here, the loader unpacks + ingests posts/messages)
 - **Bullet journal entries** — `corpus/journal/YYYY/MM/DD.md`
-  (matches the [mission-bullet](https://github.com/lerugray/mission-bullet)
+  (matches the [mission-bullet-oss](https://github.com/lerugray/mission-bullet-oss)
   layout, opt-in)
 - **Music metadata sidecar** — `corpus/music/per-song/*.json` +
   `corpus/music/catalog/catalog_analysis.json` (catalog-style data)

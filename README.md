@@ -71,7 +71,7 @@ on your disk, your keys for paid providers, no SaaS layer.
 - **[GeneralStaff](https://github.com/lerugray/generalstaff)**:
   multi-project bot orchestrator with hands-off enforcement and
   audit logging.
-- **[mission-bullet](https://github.com/lerugray/mission-bullet)**:
+- **[mission-bullet-oss](https://github.com/lerugray/mission-bullet-oss)**:
   AI-assisted bullet journal for daily capture and weekly review.
   Companion for "what am I thinking right now" while mission-brain
   handles "what have I written about X."
