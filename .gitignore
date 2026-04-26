@@ -1,0 +1,44 @@
+# Local-only state / secrets
+.claude/
+.env
+.env.local
+
+# Corpus + vault — private user data and tool-authored wiki output
+corpus/*
+!corpus/.gitkeep
+!corpus/README.md
+vault/*
+!vault/.gitkeep
+embeddings/
+*.duckdb
+*.sqlite
+*.lance/
+
+# Raw source drops staged at repo root before extraction into corpus/
+facebook-*.zip
+*.mbox
+*.mbox.gz
+
+# Ingest run logs
+logs/
+
+# Python toolchain artifacts
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Editor + OS cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Worktree dirs
+.bot-worktree/
