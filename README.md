@@ -1,12 +1,5 @@
 # mission-brain
 
-> **DRAFT — final voice pass pending before public push.**
-> This README is a placeholder structure. The hero, privacy callout,
-> and differentiators paragraph need a final voice-pass before this
-> repo flips public per the strategy doc. See
-> `docs/internal/STRATEGY-2026-04-26.md` (in raybrain) for the
-> design spec.
-
 A retrieval-only second brain over your own writing. Returns cited
 passages from your corpus. Never generates text without a marker
 back to what you actually wrote.
