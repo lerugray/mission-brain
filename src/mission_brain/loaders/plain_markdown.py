@@ -34,7 +34,7 @@ class PlainMarkdownLoader(SourceLoader):
 
     def __init__(self, provenance: Provenance = "primary") -> None:
         """``provenance`` tags every emitted SourceDocument so downstream
-        wiki pages can distinguish primary material (Ray-authored) from
+        wiki pages can distinguish primary material (user-authored) from
         derived material (content synthesized by another tool before
         reaching mission-brain — e.g. catalogdna's LLM-analyzed Theory/ pages).
         """

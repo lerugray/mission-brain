@@ -1,6 +1,6 @@
 {
   "participants": [
-    {"name": "Ray Weiss"},
+    {"name": "Test User"},
     {"name": "Drive-By Acquaintance"}
   ],
   "messages": [
@@ -10,7 +10,7 @@
       "content": "saw your post"
     },
     {
-      "sender_name": "Ray Weiss",
+      "sender_name": "Test User",
       "timestamp_ms": 1500100060000,
       "content": "thanks"
     }

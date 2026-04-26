@@ -76,7 +76,7 @@ def ingest_cmd(
     """Walk the corpus, synthesize wiki pages, update index + log.
 
     Walks two plain-markdown subfolders with different provenance tags:
-    ``plain-md/`` (primary — Ray-authored) and ``plain-md-derived/``
+    ``plain-md/`` (primary — user-authored) and ``plain-md-derived/``
     (derived — content synthesized by another tool). Also walks
     ``music/per-song/`` and ``music/catalog/`` with the
     :class:`MusicDataLoader` and ``facebook/`` with the three
@@ -423,7 +423,7 @@ def _ingest_facebook_single(
             _ingest_one(doc, settings, client, bucket, totals, loader=loader)
     elif "inbox" in parts:
         # A message file lives under inbox/<thread>/; ingest just that thread.
-        # Relax threshold to 1 so --file works regardless of Ray-word count.
+        # Relax threshold to 1 so --file works regardless of user-content word count.
         # If the thread is oversized, discover yields multiple _thread_partN
         # paths — ingest each part.
         loader = FacebookMessagesLoader(min_words=1, provenance="primary")

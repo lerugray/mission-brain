@@ -44,7 +44,7 @@ def _page_one() -> WikiPage:
         source_ids=[SourceId("plain-md-journal-2016-09")],
         paragraphs=[
             Paragraph(
-                text="Ray frames asymmetric objectives as a third way.",
+                text="The user frames asymmetric objectives as a third way.",
                 citations=[_cite()],
             ),
             Paragraph(

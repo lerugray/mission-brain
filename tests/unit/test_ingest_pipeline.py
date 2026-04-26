@@ -28,7 +28,7 @@ def _source_doc() -> SourceDocument:
     return SourceDocument(
         title="Asymmetric Objectives",
         body=(
-            "Ray describes asymmetric objectives as a third way\n"
+            "The user describes asymmetric objectives as a third way\n"
             "between victory conditions and pure scoring.\n"
             "He returns to this in later design notes.\n"
         ),
@@ -43,7 +43,7 @@ def _source_doc() -> SourceDocument:
 
 VALID_MARKDOWN = (
     "# Asymmetric Objectives\n\n"
-    "Ray frames asymmetric objectives as a third way between\n"
+    "The user frames asymmetric objectives as a third way between\n"
     "victory conditions and pure scoring "
     "[ref:journal-2016-09:lines=1-2].\n\n"
     "He returns to the framing in later design notes "

@@ -11,7 +11,7 @@ from mission_brain.ingest.citation_floor import (
 
 
 def test_valid_paragraph_with_ref_passes():
-    md = "Ray's 2016 journal names asymmetric objectives [ref:journal-2016-09:lines=45-52]."
+    md = "The user's 2016 journal names asymmetric objectives [ref:journal-2016-09:lines=45-52]."
     check_citation_floor(md)
 
 

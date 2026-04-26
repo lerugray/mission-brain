@@ -74,7 +74,7 @@ def corpus_with_journal(tmp_path: Path) -> Path:
 
 
 def test_discover_yields_raw_and_monthly_only(corpus_with_journal: Path) -> None:
-    """Refined entries are AI-polish, not Ray's voice — explicitly excluded.
+    """Refined entries are AI-polish, not the user's voice — explicitly excluded.
 
     Mission-bullet's DD.refined.md files are produced by an LLM
     polishing the raw entry; ingesting them pollutes voice retrieval

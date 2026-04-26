@@ -157,8 +157,8 @@ class Settings(BaseModel):
     fb_group_min_contribs: int = Field(
         default_factory=lambda: _env_int("MISSION_BRAIN_FB_GROUP_MIN_CONTRIBS", 20)
     )
-    # rb-035: journal-corpus ingest config (default ON per Ray's
-    # 2026-04-25 call). Privacy is enforced downstream by the
+    # rb-035: journal-corpus ingest config (default ON; 2026-04-25
+    # resolution). Privacy is enforced downstream by the
     # ``journal-private`` provenance tag — bot consumers default-
     # exclude it via --exclude-provenance even when ingestion runs.
     journal_enabled: bool = Field(

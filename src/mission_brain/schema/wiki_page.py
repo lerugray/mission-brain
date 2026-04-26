@@ -21,7 +21,7 @@ __all__ = ["Paragraph", "Provenance", "WikiPage"]
 # "journal-private" added 2026-04-26 (rb-035) for the bullet-journal
 # corpus. Downstream consumers (CLI --exclude-provenance, MCP server
 # default exclusions) filter this value out by default — ingestion
-# is enabled, but bot-driven drafts don't see Ray's private journal
+# is enabled, but bot-driven drafts don't see the user's private journal
 # unless explicitly opted in.
 Provenance = Literal["primary", "derived", "journal-private"]
 
@@ -52,8 +52,8 @@ class Paragraph(BaseModel):
 class WikiPage(BaseModel):
     """A synthesized wiki page composed of cited paragraphs.
 
-    ``provenance`` distinguishes primary sources (Ray-authored or
-    mechanical extractions from Ray's own material) from derived
+    ``provenance`` distinguishes primary sources (user-authored or
+    mechanical extractions from the user's own material) from derived
     sources (content synthesized by another tool before reaching
     mission-brain). Defaults to ``"primary"`` so existing call sites
     remain unchanged.

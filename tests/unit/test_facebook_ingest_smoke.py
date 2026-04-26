@@ -50,7 +50,7 @@ _CANNED_POSTS_MD = (
     "\n"
     "## Recurring themes\n"
     "\n"
-    f"Ray posted about his band and touring. [ref:{_POSTS_SID}:para=1356998400]\n"
+    f"The user posted about their band and touring. [ref:{_POSTS_SID}:para=1356998400]\n"
     "\n"
     "## Political commentary\n"
     "\n"
@@ -114,7 +114,7 @@ _CANNED_MSG_MD = (
     "\n"
     "## Relationship context\n"
     "\n"
-    "Ray and Synthetic Friend exchange short updates. "
+    "The user and Synthetic Friend exchange short updates. "
     f"[ref:{_MSG_SID}:para=1500000060000]\n"
     "\n"
     "## Topics discussed\n"
@@ -169,10 +169,10 @@ _CANNED_GROUP_MD = (
     "\n"
     "## Group purpose\n"
     "\n"
-    "A synthetic group Ray contributed to repeatedly. "
+    "A synthetic group the user contributed to repeatedly. "
     f"[ref:{_GROUP_SID}:para=1400000000]\n"
     "\n"
-    "## Ray's role\n"
+    "## The user's role\n"
     "\n"
     "Regular poster across 11 entries. "
     f"[ref:{_GROUP_SID}:para=1400100000]\n"
@@ -211,4 +211,4 @@ def test_fb_groups_prompt_dispatch_fires() -> None:
     prompt = client.calls[0]
     assert "TASK (facebook group)" in prompt
     assert "## Group purpose" in prompt
-    assert "## Ray's role" in prompt
+    assert "## The user's role" in prompt

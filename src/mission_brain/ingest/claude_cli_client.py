@@ -1,7 +1,7 @@
 """Claude Code CLI client — synthesis via ``claude -p``.
 
 Shells out to the user's installed Claude Code CLI and returns
-its stdout. Uses Ray's existing subscription instead of the
+its stdout. Uses the user's existing subscription instead of the
 Anthropic API. No HTTP egress of our own; network_guard is not
 invoked because the CLI handles its own transport.
 

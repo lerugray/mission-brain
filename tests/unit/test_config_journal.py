@@ -45,7 +45,7 @@ def test_provenance_rejects_unknown_value() -> None:
 
 
 # ---------------------------------------------------------------------------
-# journal_enabled (default ON per Ray's 2026-04-25 resolution)
+# journal_enabled (default ON; 2026-04-25 resolution)
 
 
 def test_journal_enabled_defaults_true(monkeypatch) -> None:

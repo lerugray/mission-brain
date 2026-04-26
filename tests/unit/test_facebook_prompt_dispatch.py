@@ -76,10 +76,10 @@ def _fb_msg_doc() -> SourceDocument:
         body=(
             "title: Facebook Messages — Synthetic Friend\n"
             "thread: synthetic-above_123456\nmessage_count: 2\n\n"
-            "[msg_id=1500000060000 at=2017-07-14 02:41:00.000 UTC] [Ray]\n"
-            "synthetic ray message\n\n"
+            "[msg_id=1500000060000 at=2017-07-14 02:41:00.000 UTC] [self]\n"
+            "synthetic self-authored message\n\n"
         ),
-        frontmatter={"message_count": 2, "ray_words": 40},
+        frontmatter={"message_count": 2, "user_words": 40},
         line_count=7,
         content_hash="def" * 21,
         source_path=Path(
@@ -189,8 +189,7 @@ def test_fb_posts_prompt_uses_post_id_locator() -> None:
 def test_fb_posts_prompt_includes_political_fidelity_instruction() -> None:
     got = build_ingest_prompt(_fb_posts_doc(), None, "SCHEMA")
     assert "PRESERVE VERBATIM QUOTES" in got
-    assert "Zionism" in got
-    assert "Netanyahu" in got
+    assert "politically charged subjects" in got
     assert "do NOT sanitize" in got.lower() or "not sanitize" in got.lower()
 
 
@@ -252,7 +251,7 @@ def test_fb_groups_prompt_contains_four_required_sections() -> None:
     got = build_ingest_prompt(_fb_group_doc(), None, "SCHEMA")
     for heading in (
         "## Group purpose",
-        "## Ray's role",
+        "## The user's role",
         "## Recurring contributions",
         "## Notable verbatim posts",
     ):

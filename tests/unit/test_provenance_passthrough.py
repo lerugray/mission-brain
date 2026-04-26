@@ -2,8 +2,8 @@
 
 Verifies that a `SourceDocument` with `provenance="derived"` carries
 its tag through the ingest pipeline and out to the wiki store's
-frontmatter, so queries can distinguish primary material (Ray-authored
-or mechanical extractions from Ray's own work) from derived material
+frontmatter, so queries can distinguish primary material (user-authored
+or mechanical extractions from the user's own work) from derived material
 (content synthesized by another tool before reaching mission-brain).
 """
 

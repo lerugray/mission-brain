@@ -7,7 +7,7 @@ inputs that feed a wiki page, produce a deterministic manifest whose
 ``manifest_hash`` is sufficient to decide "regenerate or skip" at
 step 2 of the ingest pipeline (CLAUDE.md §3.1).
 
-The full §2.2 test (run ingest twice, diff outputs) requires Ray's
+The full §2.2 test (run ingest twice, diff outputs) requires the
 schema models plus the ingest pipeline that uses them; both land
 later. This module is the pure hashing primitive that pipeline will
 call.

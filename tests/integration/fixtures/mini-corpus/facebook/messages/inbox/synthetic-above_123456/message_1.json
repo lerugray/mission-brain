@@ -1,6 +1,6 @@
 {
   "participants": [
-    {"name": "Ray Weiss"},
+    {"name": "Test User"},
     {"name": "Synthetic Friend"}
   ],
   "messages": [
@@ -10,14 +10,14 @@
       "content": "hey how are you"
     },
     {
-      "sender_name": "Ray Weiss",
+      "sender_name": "Test User",
       "timestamp_ms": 1500000060000,
       "content": "doing well thanks one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five"
     },
     {
-      "sender_name": "Ray Weiss",
+      "sender_name": "Test User",
       "timestamp_ms": 1500000120000,
-      "content": "another line from ray with extra words to push the ray-authored total above the test threshold of twenty words easily even accounting for stopwords"
+      "content": "another line from the user with extra words to push the user-authored total above the test threshold of twenty words easily even accounting for stopwords"
     },
     {
       "sender_name": "Synthetic Friend",

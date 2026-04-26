@@ -1,6 +1,6 @@
 """Music-data loader — reads pretty_midi-exported JSON (rayb-013-c).
 
-Handles two shapes that catalogdna produces from Ray's own audio:
+Handles two shapes that catalogdna produces from the user's own audio:
 
 * **Per-song JSON** — one file per track under ``music/per-song/``.
   Renders a deterministic plain-text body (time-labeled note lines
@@ -13,7 +13,7 @@ Handles two shapes that catalogdna produces from Ray's own audio:
   distributions). Cited via ``[ref:...:para=<top-level-key>]``.
 
 Provenance is ``"primary"``: the JSONs are mechanical extraction
-from Ray's audio (basic-pitch → pretty_midi), not downstream
+from the user's audio (basic-pitch → pretty_midi), not downstream
 synthesis.
 
 This loader is pure-stdlib. pretty_midi / music21 are NOT

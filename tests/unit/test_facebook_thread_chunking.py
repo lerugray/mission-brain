@@ -32,7 +32,7 @@ from mission_brain.loaders.facebook import (
 
 
 def _write_thread(
-    inbox: Path, name: str, messages: list[dict], participants=("Ray Weiss", "Other")
+    inbox: Path, name: str, messages: list[dict], participants=("Test User", "Other")
 ) -> Path:
     thread_dir = inbox / name
     thread_dir.mkdir(parents=True)
@@ -58,7 +58,7 @@ def _msg(ts_ms: int, sender: str, content: str) -> dict:
 
 def _big_corpus(tmp_path: Path, per_msg_chars: int, count: int) -> Path:
     inbox = tmp_path / "facebook" / "messages" / "inbox"
-    body_chunk = "ray talks about politics and wargames " * (
+    body_chunk = "the user talks about politics and wargames " * (
         max(1, per_msg_chars // 40)
     )
     msgs = []
@@ -66,7 +66,7 @@ def _big_corpus(tmp_path: Path, per_msg_chars: int, count: int) -> Path:
         msgs.append(
             _msg(
                 1_500_000_000_000 + i * 60_000,
-                "Ray Weiss",
+                "Test User",
                 body_chunk[:per_msg_chars],
             )
         )
@@ -83,7 +83,7 @@ def test_small_thread_still_uses_plain_thread_agg(tmp_path: Path) -> None:
     _write_thread(
         inbox,
         "small_1",
-        [_msg(1_500_000_000_000 + i * 1_000, "Ray Weiss", "short message") for i in range(30)],
+        [_msg(1_500_000_000_000 + i * 1_000, "Test User", "short message") for i in range(30)],
     )
     loader = FacebookMessagesLoader(min_words=1)
     paths = list(loader.discover(tmp_path))
@@ -195,9 +195,9 @@ def test_single_oversized_message_gets_its_own_chunk(tmp_path: Path) -> None:
         inbox,
         "mega_5",
         [
-            _msg(1_500_000_000_000, "Ray Weiss", "short"),
-            _msg(1_500_000_060_000, "Ray Weiss", mega),
-            _msg(1_500_000_120_000, "Ray Weiss", "short tail"),
+            _msg(1_500_000_000_000, "Test User", "short"),
+            _msg(1_500_000_060_000, "Test User", mega),
+            _msg(1_500_000_120_000, "Test User", "short tail"),
         ],
     )
     loader = FacebookMessagesLoader(min_words=1, chunk_max_tokens=20_000)
@@ -222,7 +222,7 @@ def test_load_rejects_nonexistent_part_index(tmp_path: Path) -> None:
 
 def test_load_rejects_unrecognized_thread_path(tmp_path: Path) -> None:
     inbox = tmp_path / "facebook" / "messages" / "inbox"
-    _write_thread(inbox, "basic_9", [_msg(1_500_000_000_000, "Ray Weiss", "hi")])
+    _write_thread(inbox, "basic_9", [_msg(1_500_000_000_000, "Test User", "hi")])
     loader = FacebookMessagesLoader(min_words=1)
     with pytest.raises(ValueError, match="_thread"):
         loader.load(inbox / "basic_9" / "not-an-agg.agg")
@@ -252,7 +252,7 @@ def test_chunk_messages_empty_input_returns_one_empty_chunk() -> None:
 
 def test_chunk_messages_packs_greedily_within_budget() -> None:
     msgs = [
-        _msg(i, "Ray Weiss", "x" * 400) for i in range(10)
+        _msg(i, "Test User", "x" * 400) for i in range(10)
     ]
     # each msg ~= 20 + 400/4 = 120 tokens. Budget 250 → ~2 msgs/chunk.
     chunks = _chunk_messages(msgs, 250)
@@ -265,9 +265,9 @@ def test_chunk_messages_packs_greedily_within_budget() -> None:
 def test_chunk_messages_empty_content_rides_with_its_chunk() -> None:
     """Empty-content messages cost 0 tokens and don't force a split."""
     msgs = [
-        _msg(1, "Ray Weiss", "x" * 400),
-        _msg(2, "Ray Weiss", ""),
-        _msg(3, "Ray Weiss", "x" * 400),
+        _msg(1, "Test User", "x" * 400),
+        _msg(2, "Test User", ""),
+        _msg(3, "Test User", "x" * 400),
     ]
     # Budget just under 2×msg → the empty msg rides with its neighbor.
     chunks = _chunk_messages(msgs, 200)

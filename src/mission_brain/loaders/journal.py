@@ -9,21 +9,21 @@ ingest is enabled (rb-035 default ``journal_enabled=True``).
 
 Layers handled:
 
-- **Raw** (rb-036): ``entries/YYYY/MM/DD.md`` — Ray's
+- **Raw** (rb-036): ``entries/YYYY/MM/DD.md`` — the user's
   rapid-log entries, untouched. The voice-bearing layer.
 - **Monthly** (rb-037): ``entries/YYYY/MM/monthly.md`` — monthly
   aggregate / log file when present.
 
 Skipped (with reasons):
 
-- ``DD.refined.md`` — **AI-polished output**, not Ray's voice.
+- ``DD.refined.md`` — **AI-polished output**, not the user's voice.
   Inspected 2026-04-26: mission-bullet's refined files carry an
   explicit header ``"AI-REFINED OUTPUT — do not treat this as
   your own writing"`` with metadata showing the polish is done
   by ``openrouter:anthropic/claude-sonnet-4-6``. The rb-037 task
-  description assumed refined = Ray's edit-toward-voice; reality
-  is refined = Claude's polish of Ray's notes. Ingesting refined
-  pollutes voice retrieval (two layers of LLM removal from Ray's
+  description assumed refined = the user's edit-toward-voice; reality
+  is refined = Claude's polish of the user's notes. Ingesting refined
+  pollutes voice retrieval (two layers of LLM removal from the user's
   actual voice) and adds redundant content (refined covers the
   same topics as raw, just paraphrased). If a future use case
   needs refined-derived content, it should be added back with a
@@ -78,7 +78,7 @@ class MissionBulletLoader(SourceLoader):
         """``provenance`` defaults to ``"journal-private"`` per rb-035 —
         downstream consumers exclude this provenance by default. Override
         when constructing the loader if a different tag is needed (e.g.,
-        a future "journal-public" subset for entries Ray explicitly
+        a future "journal-public" subset for entries the user explicitly
         marks shareable).
         """
         self._provenance: Provenance = provenance
@@ -88,7 +88,7 @@ class MissionBulletLoader(SourceLoader):
 
         Yields raw (DD.md) and monthly (monthly.md) entries in
         deterministic sorted order. Refined entries (DD.refined.md)
-        are **explicitly skipped** — they're AI-polished, not Ray's
+        are **explicitly skipped** — they're AI-polished, not the user's
         voice (see module docstring for the 2026-04-26 finding).
         Also skips chat transcripts (DD.claude.md, rb-039 deferred),
         Excalidraw sketches, and any other .md at this depth.

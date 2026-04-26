@@ -22,6 +22,9 @@ facebook-*.zip
 # Ingest run logs
 logs/
 
+# Lockfile (uv) — do not commit; each developer locks locally
+uv.lock
+
 # Python toolchain artifacts
 __pycache__/
 *.pyc

@@ -3,7 +3,7 @@
 Reads Facebook's JSON export shape and emits :class:`SourceDocument`
 instances shaped for the mission-brain ingest pipeline. Three loaders,
 one module — they share small helpers (text normalization, slug,
-timestamp rendering, Ray-authored filtering) so splitting into
+timestamp rendering, user-authored filtering) so splitting into
 separate modules would be premature.
 
 **Aggregation granularity** (PLAN-facebook-ingest-2026-04-20.md §1):
@@ -14,13 +14,13 @@ separate modules would be premature.
   not exist on disk; ``load()`` parses the year out and walks the
   real ``your_posts__check_ins__photos_and_videos_*.json`` files.
 * ``FacebookMessagesLoader`` — one ``SourceDocument`` per
-  message thread whose Ray-authored word count meets the
+  message thread whose user-authored word count meets the
   threshold (default 5000, override via ``MISSION_BRAIN_FB_MSG_MIN_WORDS``
   env or constructor kwarg). ``discover()`` yields synthetic paths
   ``corpus/facebook/messages/inbox/<thread>/_thread.agg`` one per
   qualifying thread.
 * ``FacebookGroupsLoader`` — one ``SourceDocument`` per group
-  whose Ray contribution count meets the threshold (default 20,
+  whose user contribution count meets the threshold (default 20,
   override via ``MISSION_BRAIN_FB_GROUP_MIN_CONTRIBS``). Synthetic paths
   ``corpus/facebook/groups/_group_<slug>.agg``.
 
@@ -60,10 +60,10 @@ __all__ = [
     "FacebookGroupsLoader",
     "FacebookMessagesLoader",
     "FacebookPostsLoader",
-    "RAY_NAME",
+    "FACEBOOK_USER_DISPLAY_NAME",
 ]
 
-RAY_NAME = "Ray Weiss"
+FACEBOOK_USER_DISPLAY_NAME = "Test User"
 DEFAULT_MSG_MIN_WORDS = 5000
 DEFAULT_GROUP_MIN_CONTRIBS = 20
 # Threads whose rendered body exceeds this estimated token count
@@ -156,28 +156,31 @@ def _extract_post_prose(entry: dict[str, Any]) -> str:
     title = entry.get("title")
     if isinstance(title, str) and title.strip():
         stripped = title.strip()
-        # FB auto-generates title either as bare "Ray Weiss" (for a pure
-        # prose post) or as "Ray Weiss <verb>..." (for structural
+        # FB auto-generates title either as bare display name (for a pure
+        # prose post) or as "<name> <verb>..." (for structural
         # activity — added a photo, shared a link, checked in). Neither
         # is user-authored prose; skip both.
+        u = FACEBOOK_USER_DISPLAY_NAME
         auto_prefixes = (
-            "Ray Weiss added ",
-            "Ray Weiss shared ",
-            "Ray Weiss updated ",
-            "Ray Weiss was ",
-            "Ray Weiss is ",
-            "Ray Weiss posted ",
-            "Ray Weiss wrote ",
-            "Ray Weiss changed ",
-            "Ray Weiss and ",
-            "Ray Weiss became ",
-            "Ray Weiss commented ",
-            "Ray Weiss replied ",
-            "Ray Weiss liked ",
-            "Ray Weiss checked in",
-            "Ray Weiss is now ",
+            f"{u} added ",
+            f"{u} shared ",
+            f"{u} updated ",
+            f"{u} was ",
+            f"{u} is ",
+            f"{u} posted ",
+            f"{u} wrote ",
+            f"{u} changed ",
+            f"{u} and ",
+            f"{u} became ",
+            f"{u} commented ",
+            f"{u} replied ",
+            f"{u} liked ",
+            f"{u} checked in",
+            f"{u} is now ",
         )
-        is_auto = stripped == RAY_NAME or stripped.startswith(auto_prefixes)
+        is_auto = stripped == FACEBOOK_USER_DISPLAY_NAME or stripped.startswith(
+            auto_prefixes
+        )
         if not is_auto:
             parts.append(_fix_mojibake(stripped))
     for item in entry.get("data") or []:
@@ -389,12 +392,12 @@ class FacebookMessagesLoader(SourceLoader):
             if merged is None:
                 continue
             _parts, messages = merged
-            ray_words = sum(
+            user_words = sum(
                 _word_count(m.get("content", ""))
                 for m in messages
-                if _is_ray_msg(m)
+                if _is_user_msg(m)
             )
-            if ray_words < self._min_words:
+            if user_words < self._min_words:
                 continue
             chunks = _chunk_messages(messages, self._chunk_max_tokens)
             if len(chunks) == 1:
@@ -442,16 +445,16 @@ class FacebookMessagesLoader(SourceLoader):
         if slice_total > 1:
             source_id = f"{source_id}-part{slice_index}"
 
-        other = [p for p in participants if p != RAY_NAME]
+        other = [p for p in participants if p != FACEBOOK_USER_DISPLAY_NAME]
         title_source = ", ".join(other) if other else "self"
         title = f"Facebook Messages — {title_source}"
         if slice_total > 1:
             title = f"{title} (part {slice_index} of {slice_total})"
 
-        ray_words = sum(
+        user_words = sum(
             _word_count(m.get("content", ""))
             for m in chunk_messages
-            if _is_ray_msg(m)
+            if _is_user_msg(m)
         )
         total_words = sum(
             _word_count(m.get("content", "")) for m in chunk_messages
@@ -462,7 +465,7 @@ class FacebookMessagesLoader(SourceLoader):
             f"thread: {thread_dir.name}",
             f"participants: {', '.join(sorted(participants))}",
             f"message_count: {len(chunk_messages)}",
-            f"ray_words: {ray_words}",
+            f"user_words: {user_words}",
         ]
         if slice_total > 1:
             lines.append(f"part: {slice_index}")
@@ -470,7 +473,7 @@ class FacebookMessagesLoader(SourceLoader):
         lines.append("")
         for m in chunk_messages:
             ts_ms = int(m.get("timestamp_ms", 0))
-            tag = "[Ray]" if _is_ray_msg(m) else "[them]"
+            tag = "[self]" if _is_user_msg(m) else "[them]"
             content = _fix_mojibake((m.get("content") or "").strip())
             if not content:
                 continue
@@ -496,7 +499,7 @@ class FacebookMessagesLoader(SourceLoader):
             "thread_dir": thread_dir.name,
             "participants": sorted(participants),
             "message_count": len(chunk_messages),
-            "ray_words": ray_words,
+            "user_words": user_words,
             "total_words": total_words,
         }
         if slice_total > 1:
@@ -553,7 +556,7 @@ def _estimate_tokens(text: str) -> int:
 def _estimate_msg_tokens(msg: dict[str, Any]) -> int:
     """Token budget contribution of one rendered message line pair.
 
-    Covers the header ``[msg_id=... at=...] [Ray|them]`` plus the content
+    Covers the header ``[msg_id=... at=...] [self|them]`` plus the content
     line plus a blank separator. Messages with empty content are skipped
     during rendering, so they contribute zero tokens.
     """
@@ -627,8 +630,8 @@ def _merge_thread(
     return sorted(participants), all_msgs
 
 
-def _is_ray_msg(msg: dict[str, Any]) -> bool:
-    return msg.get("sender_name") == RAY_NAME
+def _is_user_msg(msg: dict[str, Any]) -> bool:
+    return msg.get("sender_name") == FACEBOOK_USER_DISPLAY_NAME
 
 
 # ---------------------------------------------------------------------------

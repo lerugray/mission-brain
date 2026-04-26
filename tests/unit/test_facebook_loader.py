@@ -179,12 +179,12 @@ def test_messages_load_shape() -> None:
     assert doc.provenance == "primary"
     assert "Synthetic Friend" in doc.title
     assert doc.frontmatter["message_count"] == 4
-    assert doc.frontmatter["ray_words"] >= 20
-    assert "Ray Weiss" in doc.frontmatter["participants"]
+    assert doc.frontmatter["user_words"] >= 20
+    assert "Test User" in doc.frontmatter["participants"]
     assert "Synthetic Friend" in doc.frontmatter["participants"]
 
 
-def test_messages_body_tags_ray_and_other_messages() -> None:
+def test_messages_body_tags_self_and_other_messages() -> None:
     loader = _messages_loader(min_words=20)
     thread = (
         FIXTURES / "facebook" / "messages" / "inbox"
@@ -195,10 +195,10 @@ def test_messages_body_tags_ray_and_other_messages() -> None:
     first_idx = doc.body.find("[msg_id=1500000000000")
     assert first_idx != -1
     assert "[them]" in doc.body[first_idx : first_idx + 80]
-    # Second message is Ray's.
+    # Second message is from the export user.
     second_idx = doc.body.find("[msg_id=1500000060000")
     assert second_idx != -1
-    assert "[Ray]" in doc.body[second_idx : second_idx + 80]
+    assert "[self]" in doc.body[second_idx : second_idx + 80]
 
 
 def test_messages_body_is_chronological() -> None:
@@ -221,10 +221,10 @@ def test_messages_merges_multiple_message_files(tmp_path: Path) -> None:
     thread_dir = tmp_path / "facebook" / "messages" / "inbox" / "multi_42"
     thread_dir.mkdir(parents=True)
     file1 = {
-        "participants": [{"name": "Ray Weiss"}, {"name": "Other"}],
+        "participants": [{"name": "Test User"}, {"name": "Other"}],
         "messages": [
             {
-                "sender_name": "Ray Weiss",
+                "sender_name": "Test User",
                 "timestamp_ms": 2000000000000,
                 "content": "later message " + " ".join(str(i) for i in range(30)),
             },
@@ -233,10 +233,10 @@ def test_messages_merges_multiple_message_files(tmp_path: Path) -> None:
         "thread_path": "inbox/multi_42",
     }
     file2 = {
-        "participants": [{"name": "Ray Weiss"}, {"name": "Other"}],
+        "participants": [{"name": "Test User"}, {"name": "Other"}],
         "messages": [
             {
-                "sender_name": "Ray Weiss",
+                "sender_name": "Test User",
                 "timestamp_ms": 1000000000000,
                 "content": "earlier message " + " ".join(str(i) for i in range(30)),
             },
@@ -262,7 +262,7 @@ def test_messages_threshold_env_var_override(monkeypatch) -> None:
     monkeypatch.setenv("MISSION_BRAIN_FB_MSG_MIN_WORDS", "5")
     loader = FacebookMessagesLoader()
     # At min_words=5 both threads qualify (even the "below" thread has
-    # "thanks" from Ray which is 1 word — still below — but the
+    # "thanks" from the user which is 1 word — still below — but the
     # "above" thread easily qualifies). We verify the loader read the
     # env var by checking its internal field.
     assert loader._min_words == 5
@@ -373,19 +373,19 @@ def test_slugify_strips_non_alnum() -> None:
 
 
 def test_extract_group_name_variations() -> None:
-    assert _extract_group_name("Ray Weiss posted in Foo Bar.") == "Foo Bar"
+    assert _extract_group_name("Test User posted in Foo Bar.") == "Foo Bar"
     assert (
-        _extract_group_name("Ray Weiss commented on Jane's post in Baz Qux.")
+        _extract_group_name("Test User commented on Jane's post in Baz Qux.")
         == "Baz Qux"
     )
-    assert _extract_group_name("Ray Weiss shared a link.") is None
+    assert _extract_group_name("Test User shared a link.") is None
     assert _extract_group_name("") is None
     assert _extract_group_name(None) is None  # type: ignore[arg-type]
 
 
 def test_extract_post_prose_skips_auto_titles() -> None:
     entry = {
-        "title": "Ray Weiss added a new photo.",
+        "title": "Test User added a new photo.",
         "data": [{"post": "real body"}],
         "attachments": [],
     }
@@ -393,7 +393,7 @@ def test_extract_post_prose_skips_auto_titles() -> None:
 
 
 def test_extract_post_prose_handles_empty() -> None:
-    assert _extract_post_prose({"title": "Ray Weiss", "data": [{}], "attachments": []}) == ""
+    assert _extract_post_prose({"title": "Test User", "data": [{}], "attachments": []}) == ""
 
 
 def test_fix_mojibake_roundtrips_utf8() -> None:

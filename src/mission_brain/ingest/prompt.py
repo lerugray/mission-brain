@@ -32,25 +32,23 @@ _CATALOG_FILENAME = "catalog_analysis.json"
 # hedging, citation-floor reminder, locator grammar. Factored out so every
 # FB source-type sees the same verbatim directive.
 _FACEBOOK_PREAMBLE = (
-    "This source is a slice of Ray's Facebook export. Ray authored the\n"
+    "This source is a slice of the user's Facebook export. The user authored the\n"
     "posts/messages/group contributions it contains. The synthesis must\n"
     "serve as a voice/opinion retrieval surface for downstream creative\n"
     "work, which constrains how you may paraphrase.\n"
     "\n"
-    "PRESERVE VERBATIM QUOTES. When Ray writes about Israel, Zionism,\n"
-    "Netanyahu, antisemitism framing, or any other politically charged\n"
-    "subject, quote his words directly. Do NOT sanitize, soften, or\n"
+    "PRESERVE VERBATIM QUOTES. When the user writes about politically charged subjects,\n"
+    "quote their words directly. Do NOT sanitize, soften, or\n"
     "editorialize. Do NOT add \"while some may view X as...\" or similar\n"
-    "framings. Ray's stated political identity is load-bearing context\n"
-    "(CLAUDE.md §0.2 principle 1) and is entitled to verbatim retrieval\n"
-    "fidelity.\n"
+    "framings. The user's stated political identity is load-bearing context — "
+    "preserve verbatim retrieval fidelity even on politically charged content.\n"
     "\n"
-    "AI-ETHICS HEDGING IS OFF-TOPIC. Do not append caveats about how\n"
-    "the reader should evaluate Ray's views, what external observers\n"
-    "might think, or whether his stances are appropriate. Ray stated\n"
-    "(CLAUDE.md §0.2 principle 2) that the ethical dimension of AI\n"
-    "use is not open for re-litigation in these outputs. Apply the\n"
-    "same rule to his political content: synthesize what he said and\n"
+    "AI-ETHICS HEDGING IS OFF-TOPIC. Ethical hedging is off-topic; do not append\n"
+    "caveats about how the reader should evaluate the user's views, what\n"
+    "external observers might think, or whether their stances are appropriate. "
+    "The ethical dimension of AI use is not open for re-litigation in these "
+    "outputs. Apply the\n"
+    "same rule to their political content: synthesize what they said and\n"
     "how, not what others might make of it.\n"
 )
 
@@ -262,10 +260,10 @@ def build_facebook_posts_ingest_prompt(
             "Notable verbatim posts",
         ),
         section_intro=(
-            "Recurring themes covers topics Ray returned to across multiple\n"
+            "Recurring themes covers topics the user returned to across multiple\n"
             "posts in this year. Political commentary covers posts about\n"
             "politics, current events, and social issues — preserve verbatim\n"
-            "quotes per the preamble. Creative projects covers his music,\n"
+            "quotes per the preamble. Creative projects covers their music,\n"
             "wargame design, and other creative work. Personal events covers\n"
             "life events, relationships, and travel. Notable verbatim posts\n"
             "lifts 3-8 posts that are the strongest voice samples for later\n"
@@ -292,13 +290,13 @@ def build_facebook_messages_ingest_prompt(
             "Notable verbatim exchanges",
         ),
         section_intro=(
-            "Relationship context covers who Ray was talking to and the\n"
+            "Relationship context covers who the user was talking to and the\n"
             "nature of the relationship (friend, collaborator, family,\n"
             "romantic, professional) inferrable from the thread. Topics\n"
             "discussed covers the substantive subjects of the conversation.\n"
-            "Tone and register covers how Ray writes in this thread — his\n"
+            "Tone and register covers how the user writes in this thread — their\n"
             "diction, humor, seriousness, in-jokes. Notable verbatim\n"
-            "exchanges lifts 2-5 exchanges that best represent Ray's voice\n"
+            "exchanges lifts 2-5 exchanges that best represent the user's voice\n"
             "in this thread — quote both sides in full for each."
         ),
         locator_label="timestamp_ms",
@@ -317,17 +315,17 @@ def build_facebook_groups_ingest_prompt(
         task_header="TASK (facebook group)",
         sections=(
             "Group purpose",
-            "Ray's role",
+            "The user's role",
             "Recurring contributions",
             "Notable verbatim posts",
         ),
         section_intro=(
             "Group purpose covers what the group is about, inferrable from\n"
-            "Ray's contributions and any context in the post titles. Ray's\n"
-            "role covers how he participated — lurker, regular poster,\n"
+            "the user's contributions and any context in the post titles. The user's\n"
+            "role covers how they participated — lurker, regular poster,\n"
             "organizer, provocateur. Recurring contributions covers topics\n"
-            "Ray raised repeatedly in this group. Notable verbatim posts\n"
-            "lifts 3-6 posts that best represent his voice in this group —\n"
+            "the user raised repeatedly in this group. Notable verbatim posts\n"
+            "lifts 3-6 posts that best represent their voice in this group —\n"
             "quote them in full."
         ),
         locator_label="post_id",

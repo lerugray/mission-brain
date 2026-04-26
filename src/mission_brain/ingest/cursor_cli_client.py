@@ -3,7 +3,7 @@
 Sibling to :mod:`mission_brain.ingest.claude_cli_client`. Implements the
 same ``generate(prompt) -> str`` contract so :func:`pipeline.ingest_source`
 treats the two interchangeably. Runs cursor-agent inside WSL because
-that's where Ray's authenticated Cursor Pro install lives (the Windows
+that's where the user's authenticated Cursor Pro install lives (the Windows
 build is GUI-only).
 
 Default model is ``composer-2-fast`` — Cursor's free-unlimited tier.
@@ -111,7 +111,7 @@ class CursorCLIClient:
         wsl_workspace = _windows_to_wsl(str(self.workspace))
         wsl_prompt = _windows_to_wsl(str(prompt_path))
 
-        # bash -lc so cursor-agent inherits Ray's WSL login PATH
+        # bash -lc so cursor-agent inherits the user's WSL login PATH
         # (~/.local/bin/cursor-agent isn't on the default non-login PATH).
         cmd_inner = (
             f"cd {wsl_workspace!s} && "

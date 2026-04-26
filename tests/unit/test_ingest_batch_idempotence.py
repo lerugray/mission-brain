@@ -266,7 +266,7 @@ def test_overlay_change_invalidates_cache(tmp_path: Path) -> None:
     )
     (vault / ".ingest-progress.json").unlink()
 
-    overlay.write_text("overlay text edited by Ray\n", encoding="utf-8")
+    overlay.write_text("overlay text edited by the user\n", encoding="utf-8")
     client2 = _ScriptedClient()
     result = run_ingest_batch(
         sources=[doc],

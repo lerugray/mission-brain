@@ -11,8 +11,8 @@ by CLAUDE.md §2.4:
   the hit list.
 
 The wiki-threshold default is deliberately permissive (0.0) —
-Ray tunes the value through the ``wiki_threshold`` argument or
-wraps this function with his own gating policy. Threshold
+the user tunes the value through the ``wiki_threshold`` argument or
+wraps this function with their own gating policy. Threshold
 *semantics* (cosine similarity, higher-is-better) are fixed by
 CLAUDE.md's "top-1 hit exceeds a threshold" phrasing; the
 *value* is a hyperparameter, not an algorithmic choice.
