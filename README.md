@@ -1,5 +1,7 @@
 # mission-brain
 
+![mission-brain — Citation-grounded, always. Open Source · BYOK · Local or Cloud](docs/images/banner.png)
+
 A retrieval-only second brain over your own writing. Returns cited
 passages from your corpus. Never generates text without a marker
 back to what you actually wrote.
