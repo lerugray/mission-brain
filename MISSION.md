@@ -13,8 +13,8 @@ The opinionated calls behind the design:
   you.
 - **Citation-mandatory.** Every paragraph in a synthesized response
   carries a `[ref:source_id:locator]` marker pointing back to your
-  actual writing. The audit trail is the contract — no
-  unsourced claims.
+  actual writing. Output without markers fails validation and never
+  reaches your vault.
 - **Voice-preserving.** The synthesis prompts are calibrated NOT
   to replace your phrasing. The retrieved passages carry their
   original tone forward.
@@ -69,18 +69,18 @@ These don't move:
 
 ## Sibling tools
 
-- **[GeneralStaff](https://github.com/lerugray/generalstaff)** —
+- **[GeneralStaff](https://github.com/lerugray/generalstaff)**:
   multi-project bot orchestrator with hands-off enforcement and
   audit logging. mission-brain is a Mode B project in GS for its
   own build-out tracking.
-- **[mission-bullet](https://github.com/lerugray/mission-bullet)** —
-  AI-assisted bullet journal, daily-capture and weekly-review.
+- **[mission-bullet](https://github.com/lerugray/mission-bullet)**:
+  AI-assisted bullet journal for daily capture and weekly review.
   Mission-bullet's daily entries are a natural mission-brain ingest
-  source (opt-in loader).
-- **[mission-swarm](https://github.com/lerugray/mission-swarm)** —
-  swarm-simulation engine for plausible audience reactions to a
-  document. Useful adjacent to mission-brain when you want to
-  rehearse how your writing might land before publishing.
+  source through an opt-in loader.
+- **[mission-swarm](https://github.com/lerugray/mission-swarm)**:
+  swarm-simulation engine that generates plausible audience
+  reactions to a document. Sits next to mission-brain when you want
+  to rehearse how a draft might land before you publish it.
 
-The four tools share a design floor: your data on your disk, your
-keys for paid providers, no SaaS layer.
+All four tools follow the same posture: your data on your disk,
+your keys for paid providers, no SaaS layer.
