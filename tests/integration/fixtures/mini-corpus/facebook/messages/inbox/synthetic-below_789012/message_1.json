@@ -1,0 +1,21 @@
+{
+  "participants": [
+    {"name": "Ray Weiss"},
+    {"name": "Drive-By Acquaintance"}
+  ],
+  "messages": [
+    {
+      "sender_name": "Drive-By Acquaintance",
+      "timestamp_ms": 1500100000000,
+      "content": "saw your post"
+    },
+    {
+      "sender_name": "Ray Weiss",
+      "timestamp_ms": 1500100060000,
+      "content": "thanks"
+    }
+  ],
+  "title": "Drive-By Acquaintance",
+  "thread_path": "inbox/synthetic-below_789012",
+  "is_still_participant": true
+}

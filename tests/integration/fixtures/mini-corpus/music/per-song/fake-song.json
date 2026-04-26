@@ -1,0 +1,31 @@
+{
+  "title": "Synthetic Fake Song",
+  "source_file": "Synthetic - Fake Song.mp3",
+  "tempo_estimates": 120.0,
+  "duration_seconds": 4.5,
+  "time_signatures": [
+    {"numerator": 4, "denominator": 4, "time": 0.0}
+  ],
+  "key_signatures": [],
+  "instruments": [
+    {
+      "program": 0,
+      "is_drum": false,
+      "name": "Track 0",
+      "note_count": 2,
+      "notes": [
+        {"pitch": 60, "pitch_name": "C4", "start": 0.0, "end": 0.5, "duration": 0.5, "velocity": 80},
+        {"pitch": 64, "pitch_name": "E4", "start": 0.5, "end": 1.0, "duration": 0.5, "velocity": 75}
+      ]
+    },
+    {
+      "program": 33,
+      "is_drum": false,
+      "name": "Bass",
+      "note_count": 1,
+      "notes": [
+        {"pitch": 40, "pitch_name": "E2", "start": 0.25, "end": 1.25, "duration": 1.0, "velocity": 90}
+      ]
+    }
+  ]
+}

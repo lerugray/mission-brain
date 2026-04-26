@@ -1,0 +1,31 @@
+{
+  "catalog_stats": {
+    "total_tracks": 3,
+    "total_notes": 42
+  },
+  "scale_fingerprint": {
+    "C major (ionian)": 2,
+    "A minor": 1
+  },
+  "chord_vocabulary": {
+    "D power chord (5th)": 10,
+    "G power chord (5th)": 7,
+    "C major triad": 3
+  },
+  "top_motifs": {
+    "(-12, 12, -12)": 5,
+    "(12, -12, 12)": 4,
+    "(0, 2, -2)": 3,
+    "(-2, 0, 2)": 2,
+    "(7, -7, 0)": 1
+  },
+  "register_usage": {
+    "bass (E2-E3)": 30.0,
+    "mid (E4-E5)": 50.0,
+    "high (E5-E6)": 20.0
+  },
+  "rhythm_distribution": {
+    "100-200ms (16th)": 40.0,
+    "200-350ms (8th)": 60.0
+  }
+}

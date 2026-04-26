@@ -1,0 +1,31 @@
+{
+  "participants": [
+    {"name": "Ray Weiss"},
+    {"name": "Synthetic Friend"}
+  ],
+  "messages": [
+    {
+      "sender_name": "Synthetic Friend",
+      "timestamp_ms": 1500000000000,
+      "content": "hey how are you"
+    },
+    {
+      "sender_name": "Ray Weiss",
+      "timestamp_ms": 1500000060000,
+      "content": "doing well thanks one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five"
+    },
+    {
+      "sender_name": "Ray Weiss",
+      "timestamp_ms": 1500000120000,
+      "content": "another line from ray with extra words to push the ray-authored total above the test threshold of twenty words easily even accounting for stopwords"
+    },
+    {
+      "sender_name": "Synthetic Friend",
+      "timestamp_ms": 1500000180000,
+      "content": "cool"
+    }
+  ],
+  "title": "Synthetic Friend",
+  "thread_path": "inbox/synthetic-above_123456",
+  "is_still_participant": true
+}

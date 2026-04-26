@@ -1,0 +1,78 @@
+[
+  {
+    "timestamp": 1356998400,
+    "attachments": [],
+    "data": [
+      {
+        "post": "synthetic post in january 2013 — a verbose prose example used to cover the year-2013 bucket in the plain-text rendering path."
+      }
+    ],
+    "title": "Ray Weiss"
+  },
+  {
+    "timestamp": 1367452800,
+    "attachments": [
+      {
+        "data": [
+          {
+            "media": {
+              "uri": "your_facebook_activity/posts/media/Photos_synthetic/42.jpg",
+              "title": "Photos",
+              "description": "synthetic caption attached to a photo post in may 2013"
+            }
+          }
+        ]
+      }
+    ],
+    "data": [{}],
+    "title": "Ray Weiss added a new photo."
+  },
+  {
+    "timestamp": 1380585600,
+    "attachments": [
+      {
+        "data": [
+          {
+            "media": {
+              "uri": "your_facebook_activity/posts/media/Photos_synthetic/43.jpg",
+              "title": "Photos"
+            }
+          }
+        ]
+      }
+    ],
+    "data": [{}],
+    "title": "Ray Weiss added a new photo."
+  },
+  {
+    "timestamp": 1393632000,
+    "attachments": [],
+    "data": [
+      {
+        "post": "synthetic political post in march 2014 — preserves verbatim phrasing so the citation-anchor test has something to hit."
+      }
+    ],
+    "title": "Ray Weiss"
+  },
+  {
+    "timestamp": 1405209600,
+    "attachments": [
+      {
+        "data": [
+          {
+            "external_context": {
+              "name": "Linked article title in july 2014",
+              "url": "https://example.com/article"
+            }
+          }
+        ]
+      }
+    ],
+    "data": [
+      {
+        "post": "synthetic link share in july 2014 with prose body."
+      }
+    ],
+    "title": "Ray Weiss shared a link."
+  }
+]

@@ -1,0 +1,69 @@
+{
+  "group_posts_v2": [
+    {
+      "timestamp": 1400000000,
+      "data": [{"post": "synthetic first post in the Active Group — prose body one."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400100000,
+      "data": [{"post": "synthetic second post in the Active Group — prose body two."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400200000,
+      "data": [{"post": "synthetic third post in the Active Group — prose body three."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400300000,
+      "data": [{"post": "fourth in Active Group."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400400000,
+      "data": [{"post": "fifth in Active Group."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400500000,
+      "data": [{}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400600000,
+      "data": [{"post": "sixth (with prose) in Active Group."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400700000,
+      "data": [{"post": "seventh in Active Group."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400800000,
+      "data": [{"post": "eighth in Active Group."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1400900000,
+      "data": [{"post": "ninth in Active Group."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1401000000,
+      "data": [{"post": "tenth in Active Group."}],
+      "title": "Ray Weiss posted in Active Synthetic Group."
+    },
+    {
+      "timestamp": 1410000000,
+      "data": [{"post": "one-off post in a Sparse Group — below threshold."}],
+      "title": "Ray Weiss posted in Sparse Synthetic Group."
+    },
+    {
+      "timestamp": 1410100000,
+      "data": [{"post": "second and last post in Sparse Group — still below threshold."}],
+      "title": "Ray Weiss posted in Sparse Synthetic Group."
+    }
+  ]
+}
