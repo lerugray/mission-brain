@@ -76,6 +76,15 @@ def _prior_block(prior_wiki_page: WikiPage | None) -> str | None:
     )
 
 
+def _format_numbered_source_body(body: str) -> str:
+    """1-based line numbers in a left margin for ``lines=N-M`` citations."""
+    lines = body.splitlines()
+    if not lines:
+        return ""
+    width = max(3, len(str(len(lines))))
+    return "\n".join(f"{i:>{width}} | {line}" for i, line in enumerate(lines, start=1))
+
+
 def _source_block(source_doc: SourceDocument) -> str:
     sid = source_doc.source_id or source_doc.source_path.stem
     return (
@@ -97,7 +106,8 @@ def build_plain_markdown_ingest_prompt(
     sid = source_doc.source_id or source_doc.source_path.stem
     parts.append(
         f"{_SECTION}\nSOURCE DOCUMENT (source_id={sid})\n"
-        f"{_SECTION}\ntitle: {source_doc.title}\n\n{source_doc.body}\n"
+        f"{_SECTION}\ntitle: {source_doc.title}\n\n"
+        f"{_format_numbered_source_body(source_doc.body)}\n"
     )
     parts.append(
         f"{_SECTION}\nTASK\n{_SECTION}\n"
@@ -105,6 +115,9 @@ def build_plain_markdown_ingest_prompt(
         f"carry at least one [ref:{sid}:<locator>] marker — use the\n"
         f"literal source_id '{sid}' shown above. Locator grammar:\n"
         "lines=N-M | page=N | timestamp=HH:MM:SS-HH:MM:SS | para=<anchor>.\n"
+        "For lines=N-M, N and M are 1-based line numbers taken from the\n"
+        "left margin of the numbered SOURCE DOCUMENT body (inclusive), not\n"
+        "the title line — match the slice of text you are citing.\n"
         "Headings and code blocks are exempt. Output raw markdown only —\n"
         "no preamble, no commentary, and DO NOT wrap the whole response\n"
         "in a ```markdown ... ``` code fence.\n"

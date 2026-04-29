@@ -20,6 +20,10 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from mission_brain.ingest.citation_alignment import (
+    CitationAlignmentFailure,
+    realign_line_locators_for_document,
+)
 from mission_brain.ingest.citation_floor import CitationFloorViolation, check_citation_floor
 from mission_brain.ingest.claude_cli_client import ClaudeCLIClient
 from mission_brain.ingest.idempotence import (
@@ -217,20 +221,32 @@ def ingest_source(
 ) -> WikiPage:
     """Synthesize a :class:`WikiPage` from *doc* via *client*."""
     base_prompt = build_ingest_prompt(doc, prior_wiki, claude_md_text)
-    last_error: CitationFloorViolation | None = None
+    last_error: CitationFloorViolation | CitationAlignmentFailure | None = None
     for attempt in range(MAX_RETRIES + 1):
         prompt = base_prompt
         if attempt > 0 and last_error is not None:
-            prompt = (
-                base_prompt
-                + f"\n\nCORRECTION: previous response violated the citation floor "
-                f"({last_error}). Every non-empty paragraph must carry at least one "
-                "[ref:<source_id>:<locator>] marker. Try again.\n"
-            )
+            if isinstance(last_error, CitationFloorViolation):
+                extra = (
+                    f"\n\nCORRECTION: previous response violated the citation floor "
+                    f"({last_error}). Every non-empty paragraph must carry at least one "
+                    "[ref:<source_id>:<locator>] marker. Try again.\n"
+                )
+            else:
+                extra = (
+                    f"\n\nCORRECTION: {last_error} "
+                    "Cite the numbered SOURCE DOCUMENT lines that actually support each "
+                    "claim — for lines=N-M, N and M are the 1-based numbers in the left "
+                    "column next to the cited text. Try again.\n"
+                )
+            prompt = base_prompt + extra
         markdown = _unwrap_outer_fence(client.generate(prompt))
         try:
             check_citation_floor(markdown)
+            markdown = realign_line_locators_for_document(markdown, doc)
         except CitationFloorViolation as exc:
+            last_error = exc
+            continue
+        except CitationAlignmentFailure as exc:
             last_error = exc
             continue
         return _parse_to_wiki_page(markdown, doc)

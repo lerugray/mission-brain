@@ -56,9 +56,12 @@ class _ScriptedClient:
         self.calls.append(prompt)
         for sid in ("src-1", "src-2", "src-3"):
             if f"source_id={sid}" in prompt:
+                # Wording overlaps the stub corpus lines so post-synthesis
+                # `lines=` realignment does not fail ingest.
                 return (
                     f"# Page about {sid}\n\n"
-                    f"A synthesized claim about {sid}. [ref:{sid}:lines=1-2]\n"
+                    f"Line one is apple, line two is banana. "
+                    f"[ref:{sid}:lines=1-2]\n"
                 )
         raise AssertionError(f"unexpected prompt: {prompt[:200]!r}")
 
@@ -144,7 +147,7 @@ def test_second_run_unchanged_inputs_skips_via_manifest(tmp_path: Path) -> None:
 
 def test_changed_content_invalidates_cache(tmp_path: Path) -> None:
     vault = tmp_path / "vault"
-    doc1 = _make_doc(tmp_path, "src-1", body="a\nb\n")
+    doc1 = _make_doc(tmp_path, "src-1", body="apple\nbanana\n")
 
     run_ingest_batch(
         sources=[doc1],
@@ -159,7 +162,7 @@ def test_changed_content_invalidates_cache(tmp_path: Path) -> None:
     )
     (vault / ".ingest-progress.json").unlink()
 
-    doc2 = _make_doc(tmp_path, "src-1", body="a\nb\nc\n")
+    doc2 = _make_doc(tmp_path, "src-1", body="apple\nbanana\ncarrot\n")
     client2 = _ScriptedClient()
     result = run_ingest_batch(
         sources=[doc2],
