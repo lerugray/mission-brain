@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from mission_brain.ingest.citation_alignment import realign_line_locators_for_document
@@ -43,6 +44,74 @@ def test_realign_corrects_misanchored_line_ref() -> None:
     assert "lines=1-1]" not in fixed
     assert "lines=3-3]" in fixed
     assert "lines=1-2]" in fixed
+
+
+def test_realign_prefers_thesis_bullet_over_trailing_yaml_metadata() -> None:
+    """Metadata that echoes topic words should not beat the supporting line."""
+    body = (
+        "- RARE: unique token ZX9 in thesis body foxes bridges mapmaking arc.\n"
+        "\n"
+        "---\n"
+        "date: 2026-01-01\n"
+        "status: open\n"
+        'tags_discovered: ["generic", "other"]\n'
+        "---\n"
+    )
+    doc = SourceDocument(
+        title="metadata bleed",
+        body=body,
+        frontmatter={},
+        line_count=body.count("\n") + 1,
+        content_hash="cafebabe",
+        source_path=Path("metadata-bleed.md"),
+        source_type="plain_markdown",
+        loader_version="1.0",
+        source_id="metadata-bleed",
+    )
+    bad = (
+        "# T\n\n"
+        "Synthesis of the RARE arc, ZX9, and foxes bridges context "
+        "[ref:metadata-bleed:lines=3-5].\n"
+    )
+    fixed = realign_line_locators_for_document(bad, doc)
+    assert "lines=1-1]" in fixed, fixed
+    assert "lines=3-5" not in fixed
+
+
+def test_realign_extends_compound_todo_to_cover_distinctive_trailing_bullet() -> None:
+    """A wide ref can match a list yet miss a distinctive later clause."""
+    body = (
+        "## Migrated\n"
+        "\n"
+        "- [ ] Water the plants. (migrated) <!-- x -->\n"
+        "- [ ] Fold laundry. (migrated) <!-- x -->\n"
+        "- [ ] Reply to project emails. (migrated) <!-- x -->\n"
+        "\n"
+        "- 19:29 log line filler.\n"
+        "- [ ] Clean desk sink and UNIQUEBATH9. (migrated) <!-- x -->\n"
+    )
+    doc = SourceDocument(
+        title="surface words",
+        body=body,
+        frontmatter={},
+        line_count=body.count("\n") + 1,
+        content_hash="cafebabe",
+        source_path=Path("surface-words.md"),
+        source_type="plain_markdown",
+        loader_version="1.0",
+        source_id="surface-words",
+    )
+    bad = (
+        "# T\n\n"
+        "Open items: plants, laundry, project emails, and clean the desk with "
+        "UNIQUEBATH9. [ref:surface-words:lines=3-5]\n"
+    )
+    fixed = realign_line_locators_for_document(bad, doc)
+    assert "lines=3-5" not in fixed
+    m = re.search(r"lines=(\d+)-(\d+)", fixed)
+    assert m is not None, fixed
+    a, b = int(m.group(1)), int(m.group(2))
+    assert a <= 3 and b >= 8
 
 
 def test_realign_is_noop_when_excerpt_matches_paragraph() -> None:
