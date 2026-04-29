@@ -114,6 +114,27 @@ def test_realign_extends_compound_todo_to_cover_distinctive_trailing_bullet() ->
     assert a <= 3 and b >= 8
 
 
+def test_realign_tightens_span_when_keepworthy_but_wide() -> None:
+    """Prefer a tighter keep-worthy window when one scores better."""
+    fixtures = Path(__file__).resolve().parents[1] / "fixtures" / "rb-052-minimal-span"
+    body = (fixtures / "source.md").read_text(encoding="utf-8")
+    wiki = (fixtures / "wiki.md").read_text(encoding="utf-8")
+    doc = SourceDocument(
+        title="minimal span",
+        body=body,
+        frontmatter={},
+        line_count=body.count("\n") + 1,
+        content_hash="rb052",
+        source_path=Path("rb052-min-span.md"),
+        source_type="plain_markdown",
+        loader_version="1.0",
+        source_id="rb052-min-span",
+    )
+    fixed = realign_line_locators_for_document(wiki, doc)
+    assert "lines=1-3" not in fixed, fixed
+    assert "lines=1-1" in fixed, fixed
+
+
 def test_realign_is_noop_when_excerpt_matches_paragraph() -> None:
     good = (
         "# T\n\n"

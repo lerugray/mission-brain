@@ -150,8 +150,8 @@ def _block_around(markdown: str, pos: int) -> str:
 
 def _best_line_range(
     body: str, paragraph_context: str, idf: dict[str, float]
-) -> tuple[tuple[int, int], float] | None:
-    """Return ((start, end) 1-based, score) for the best line window."""
+) -> tuple[tuple[int, int], float, float] | None:
+    """Return ((start, end) 1-based, raw_score, effective_score)."""
     lines = body.splitlines()
     n = len(lines)
     if n == 0 or not paragraph_context.strip():
@@ -175,7 +175,7 @@ def _best_line_range(
                 best = (t, sc, sc_eff)
     if best is None:
         return None
-    return best[0], best[1]
+    return best
 
 
 class CitationAlignmentFailure(Exception):
@@ -207,15 +207,15 @@ def realign_line_locators_for_document(markdown: str, doc: SourceDocument) -> st
 
         current_ex = _excerpt_for_range(body, ls, le)
         cur_sc = _alignment_score(para, current_ex, idf)
-        if cur_sc >= _SCORE_KEEP:
-            continue
+        cur_span = max(0, le - ls + 1)
+        cur_sc_eff = cur_sc - _LINE_RANGE_WIDTH_PENALTY * max(0, cur_span - 1)
 
         best = _best_line_range(body, para, idf)
         if best is None:
             raise CitationAlignmentFailure(
                 f"no line range in source for ref at offset {m.start()}"
             )
-        (b_start, b_end), best_sc = best
+        (b_start, b_end), best_sc, best_sc_eff = best
         if best_sc < _SCORE_MIN_BEST:
             raise CitationAlignmentFailure(
                 f"line ref at offset {m.start()}: best score {best_sc:.3f} "
@@ -228,7 +228,9 @@ def realign_line_locators_for_document(markdown: str, doc: SourceDocument) -> st
             )
         if (b_start, b_end) == (ls, le):
             continue
-        if best_sc <= cur_sc:
+        if cur_sc_eff >= _SCORE_KEEP and best_sc_eff <= cur_sc_eff:
+            continue
+        if best_sc_eff <= cur_sc_eff:
             continue
         new_loc = f"lines={b_start}-{b_end}"
         replacements.append((slice(start_ch, end_ch), new_loc))
