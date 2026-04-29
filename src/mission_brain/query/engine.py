@@ -55,8 +55,10 @@ def _parse_locator(s: str) -> Locator:
 
 
 def _hit_to_citation(hit: RetrievalHit) -> Citation:
+    # Coerce only at the retrieval boundary so older indexes with
+    # non-conformant source_ids do not crash reads. New ids remain strict.
     return Citation(
-        source_id=SourceId(hit.source_id),
+        source_id=SourceId.coerce(hit.source_id),
         locator=_parse_locator(hit.locator),
         excerpt=hit.excerpt,
     )

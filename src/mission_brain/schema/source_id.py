@@ -17,6 +17,8 @@ __all__ = ["SourceId", "SourceIdViolation"]
 
 
 _SOURCE_ID_RE = re.compile(r"^[a-z0-9_-]+$")
+_SID_SCRUB = re.compile(r"[^a-z0-9_-]+")
+_SID_COLLAPSE = re.compile(r"-{2,}")
 
 
 class SourceIdViolation(ValueError):
@@ -41,6 +43,26 @@ class SourceId(str):
                 f"source_id {value!r} does not match grammar [a-z0-9_-]+"
             )
         return super().__new__(cls, value)
+
+    @classmethod
+    def coerce(cls, value: str) -> SourceId:
+        """Lossy-normalize *value* into a valid SourceId.
+
+        Use at retrieval boundaries where persisted indexes or wiki pages
+        may carry legacy non-conformant source_ids. New source IDs should
+        still use the strict constructor so generation bugs fail loudly.
+        """
+        if not isinstance(value, str):
+            raise SourceIdViolation(
+                f"source_id must be a string, got {type(value).__name__}"
+            )
+        scrubbed = _SID_SCRUB.sub("-", value.lower())
+        coerced = _SID_COLLAPSE.sub("-", scrubbed).strip("-")
+        if not coerced:
+            raise SourceIdViolation(
+                f"source_id {value!r} is empty after scrubbing"
+            )
+        return cls(coerced)
 
     @classmethod
     def __get_pydantic_core_schema__(

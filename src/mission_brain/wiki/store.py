@@ -205,7 +205,9 @@ def read_page(page_id: str, vault_root: Path) -> WikiPage | None:
     for pdict in fm.get("paragraphs", []):
         citations = [
             Citation(
-                source_id=SourceId(cdict["source_id"]),
+                # Coerce only while reading persisted pages; writers still
+                # require strict SourceId values.
+                source_id=SourceId.coerce(cdict["source_id"]),
                 locator=_parse_locator(cdict["locator"]),
                 excerpt=cdict["excerpt"],
             )
@@ -215,7 +217,7 @@ def read_page(page_id: str, vault_root: Path) -> WikiPage | None:
 
     return WikiPage(
         title=fm["title"],
-        source_ids=[SourceId(s) for s in fm.get("source_ids", [])],
+        source_ids=[SourceId.coerce(s) for s in fm.get("source_ids", [])],
         paragraphs=paragraphs,
         provenance=fm.get("provenance", "primary"),
     )

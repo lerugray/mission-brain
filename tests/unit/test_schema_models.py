@@ -44,6 +44,48 @@ def test_source_id_invalid_raises(value: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# SourceId.coerce — lossy normalization for retrieval-boundary use
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["plain-md-journal-2016-09", "abc", "a_b-c-1", "0", "x-y-z_42"],
+)
+def test_source_id_coerce_passes_valid_through(value: str) -> None:
+    sid = SourceId.coerce(value)
+    assert sid == value
+    assert isinstance(sid, SourceId)
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("plain-md-legacy note title", "plain-md-legacy-note-title"),
+        ("HasCaps", "hascaps"),
+        ("has spaces", "has-spaces"),
+        ("has/slash", "has-slash"),
+        ("has.dot", "has-dot"),
+        ("multi   spaces", "multi-spaces"),
+        ("---leading-trailing---", "leading-trailing"),
+        ("exclaim!", "exclaim"),
+    ],
+)
+def test_source_id_coerce_slugifies(raw: str, expected: str) -> None:
+    sid = SourceId.coerce(raw)
+    assert sid == expected
+    assert SourceId(sid) == sid
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["", "!!!", "----", "   "],
+)
+def test_source_id_coerce_empty_raises(value: str) -> None:
+    with pytest.raises(SourceIdViolation):
+        SourceId.coerce(value)
+
+
+# ---------------------------------------------------------------------------
 # Locator variants
 
 
