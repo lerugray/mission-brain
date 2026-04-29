@@ -11,6 +11,7 @@ Non-``lines=`` locators and refs whose ``source_id`` does not match
 
 from __future__ import annotations
 
+import math
 import re
 from difflib import SequenceMatcher
 
@@ -34,14 +35,18 @@ _REF_MARKER = re.compile(
     r")\]"
 )
 
+# Blended score = _HYBRID_W * pure hybrid + (1 - _HYBRID_W) * IDF-weighted
+# recall over words in the paragraph, so rare terms dominate generic overlap.
+_HYBRID_W: float = 0.3
 # Current excerpt vs paragraph: keep the LLM's locator.
-_SCORE_KEEP: float = 0.14
+_SCORE_KEEP: float = 0.65
 # A replacement must still plausibly match the paragraph.
 _SCORE_MIN_BEST: float = 0.04
 # If the best line window is identical to the model's but still weak, fail.
 _SCORE_STUCK: float = 0.1
 
 _MAX_RANGE_LINES: int = 32
+_LINE_RANGE_WIDTH_PENALTY: float = 0.0010
 _TOKEN_RE = re.compile(r"[A-Za-z0-9']+")
 
 
@@ -77,6 +82,48 @@ def _hybrid_score(para: str, excerpt: str) -> float:
     return 0.5 * j + 0.5 * r
 
 
+def _line_word_line_counts(body: str) -> dict[str, int]:
+    """Map lowercased word to the number of source lines containing it."""
+    df: dict[str, int] = {}
+    for line in body.splitlines():
+        for word in _word_set(line):
+            df[word] = df.get(word, 0) + 1
+    return df
+
+
+def _idf_weights(body: str) -> dict[str, float]:
+    n_lines = len(body.splitlines())
+    if n_lines == 0:
+        return {}
+    line_df = _line_word_line_counts(body)
+    return {
+        word: math.log((1 + n_lines) / (1 + count))
+        for word, count in line_df.items()
+    }
+
+
+def _weighted_recall(para: str, excerpt: str, idf: dict[str, float]) -> float:
+    """IDF-weighted share of paragraph token weights that appear in *excerpt*."""
+    para_words, excerpt_words = _word_set(para), _word_set(excerpt)
+    if not para_words:
+        return 1.0
+    num = sum(idf.get(word, 0.0) for word in para_words if word in excerpt_words)
+    den = sum(idf.get(word, 0.0) for word in para_words)
+    if den <= 0.0:
+        return 0.0
+    return num / den
+
+
+def _alignment_score(para: str, excerpt: str, idf: dict[str, float]) -> float:
+    hybrid = _hybrid_score(para, excerpt)
+    para_words = _word_set(para)
+    den = sum(idf.get(word, 0.0) for word in para_words)
+    if den <= 0.0:
+        return hybrid
+    weighted = _weighted_recall(para, excerpt, idf)
+    return _HYBRID_W * hybrid + (1.0 - _HYBRID_W) * weighted
+
+
 def _parse_lines_locator(raw: str) -> tuple[int, int] | None:
     if not raw.startswith("lines="):
         return None
@@ -102,25 +149,33 @@ def _block_around(markdown: str, pos: int) -> str:
 
 
 def _best_line_range(
-    body: str, paragraph_context: str
+    body: str, paragraph_context: str, idf: dict[str, float]
 ) -> tuple[tuple[int, int], float] | None:
     """Return ((start, end) 1-based, score) for the best line window."""
     lines = body.splitlines()
     n = len(lines)
     if n == 0 or not paragraph_context.strip():
         return None
-    best: tuple[tuple[int, int], float] | None = None
+    best: tuple[tuple[int, int], float, float] | None = None
     for start in range(1, n + 1):
         for width in range(1, _MAX_RANGE_LINES + 1):
             end = start + width - 1
             if end > n:
                 break
             excerpt = "\n".join(lines[start - 1 : end])
-            sc = _hybrid_score(paragraph_context, excerpt)
+            sc = _alignment_score(paragraph_context, excerpt, idf)
+            span = end - start + 1
+            sc_eff = sc - _LINE_RANGE_WIDTH_PENALTY * (span - 1)
             t = (start, end)
-            if best is None or sc > best[1] or (sc == best[1] and t < best[0]):
-                best = (t, sc)
-    return best
+            if (
+                best is None
+                or sc_eff > best[2]
+                or (sc_eff == best[2] and t < best[0])
+            ):
+                best = (t, sc, sc_eff)
+    if best is None:
+        return None
+    return best[0], best[1]
 
 
 class CitationAlignmentFailure(Exception):
@@ -131,6 +186,7 @@ def realign_line_locators_for_document(markdown: str, doc: SourceDocument) -> st
     """Return *markdown* with in-document ``lines=`` ref markers adjusted."""
     expected = doc.source_id or doc.source_path.stem
     body = doc.body
+    idf = _idf_weights(body)
 
     replacements: list[tuple[slice, str]] = []
     for m in _REF_MARKER.finditer(markdown):
@@ -150,13 +206,15 @@ def realign_line_locators_for_document(markdown: str, doc: SourceDocument) -> st
         para = re.sub(r"\s+", " ", para).strip()
 
         current_ex = _excerpt_for_range(body, ls, le)
-        cur_sc = _hybrid_score(para, current_ex)
+        cur_sc = _alignment_score(para, current_ex, idf)
         if cur_sc >= _SCORE_KEEP:
             continue
 
-        best = _best_line_range(body, para)
+        best = _best_line_range(body, para, idf)
         if best is None:
-            raise CitationAlignmentFailure(f"no line range in source for ref at offset {m.start()}")
+            raise CitationAlignmentFailure(
+                f"no line range in source for ref at offset {m.start()}"
+            )
         (b_start, b_end), best_sc = best
         if best_sc < _SCORE_MIN_BEST:
             raise CitationAlignmentFailure(
